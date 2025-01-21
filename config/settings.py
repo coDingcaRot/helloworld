@@ -31,14 +31,22 @@ ALLOWED_HOSTS = []
 # Application definition
 
 INSTALLED_APPS = [
-    'django.contrib.admin',
-    'django.contrib.auth',
-    'django.contrib.contenttypes',
-    'django.contrib.sessions',
-    'django.contrib.messages',
-    'django.contrib.staticfiles',
-    'pages.apps.PagesConfig', # new
+    "django.contrib.admin",
+    "django.contrib.auth",
+    "django.contrib.contenttypes",
+    "django.contrib.sessions",
+    "django.contrib.messages",
+    "django.contrib.staticfiles",
+    'crispy_forms', # Added Lab 3
+    'crispy_bootstrap5',  #Added Lab 3
+    "pages.apps.PagesConfig",  # new
 ]
+
+# 3 below added lab 3
+CRISPY_TEMPLATE_PACK="bootstrap5"
+LOGIN_REDIRECT_URL  = "/"
+LOGOUT_REDIRECT_URL = "/"
+
 
 MIDDLEWARE = [
     'django.middleware.security.SecurityMiddleware',

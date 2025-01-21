@@ -1,4 +1,6 @@
 # pages/views.py
+# Views that will be displayed and a way to connect html views and have a response based on a request
+
 import pickle
 import pandas as pd
 import pdb
@@ -7,6 +9,9 @@ from django.shortcuts import render, HttpResponseRedirect
 from django.http import Http404, HttpResponseRedirect
 from django.urls import reverse
 from django.views.generic import TemplateView
+
+#models.py imports for db.sqlite3
+from pages.models import Item, ToDoList
 
 def homePageView(request):
     # return request object and specify page.
@@ -81,5 +86,50 @@ def results(request, choice, gmat):
     return render(request, 'results.html', {'choice': workExperience, 'gmat': gmat,
                                             'prediction': singlePrediction})
 
+# views from db.sqlite3
+def todos(request):
+    print("*** Inside todos()")
+    items = Item.objects
+    itemErrandDetail = items.select_related('todolist')
+    print(itemErrandDetail[0].todolist.name)
+    print(itemErrandDetail[0].todolist.id)
+    print(itemErrandDetail)
+    return render(request, 'ToDoItems.html',
+                {'ToDoItemDetail': itemErrandDetail})
 
 
+
+#ADDED DURING LAB 3 Defining Registration page
+from django.shortcuts import render, redirect
+from .forms import RegisterForm
+from django.contrib.auth import logout
+
+def register(response):
+    # Handle POST request.
+    if response.method == "POST":
+        form = RegisterForm(response.POST)
+        if form.is_valid():
+            form.save()
+
+            return HttpResponseRedirect(reverse('message',
+                                                kwargs={'msg': "Your are registered.", 'title': "Success!"}, ))
+    # Handle GET request.
+    else:
+        form = RegisterForm()
+    return render(response, "registration/register.html", {"form":form})
+
+#Added Lab 3
+def message(request, msg, title):
+    return render(request, 'message.html', {'msg': msg, 'title': title })
+#Added Lab 3
+def logoutView(request):
+    logout(request)
+    print("*****  You are logged out.")
+    return HttpResponseRedirect(reverse('home' ))
+#Added lab 3
+def secretArea(request):
+    if not request.user.is_authenticated:
+        return HttpResponseRedirect(reverse('message',
+               kwargs={'msg': "Please login to access this page.",
+                       'title': "Login required."}, ))
+    return render(request, 'secret.html', {'useremail': request.user.email })
